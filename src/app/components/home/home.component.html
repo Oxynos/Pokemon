@@ -1,0 +1,18 @@
+<!--<p>
+  home works!<br>
+  message : {{ message }}<br>
+  message2 : {{message2}}<br>
+</p>
+<button (click)="changeMessage()">Change the message</button>
+<a href="/about">Lien about obsolète</a>
+<a routerLink="/about">About</a>-->
+<h1>Pokemon</h1>
+<div *ngIf="isLoading" class="loader-container"><div class="loader">Loading...</div></div>
+<div [class]="defaultClasses">
+<ul>
+  <li *ngFor="let pokemon of pokemons" [ngClass]="getClasses(pokemon)">
+    <a data-[routerLink]="['/pokemon/', pokemon.id]">{{pokemon.name}}<strong *ngIf="isStronger(pokemon)">Le plus fort !!</strong></a>
+  </li>
+</ul>
+</div>
+<a routerLink="/about">Contact us</a>

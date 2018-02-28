@@ -1,0 +1,8 @@
+<div *ngIf="isLoading" class="loader-container"><div class="loader">Loading...</div></div>
+<h2 *ngIf="error">{{error}}</h2>
+<div *ngIf="pokemon">
+    <h2>{{pokemon.name}}</h2>
+    <img src="{{pokemon.sprites.front_default}}">
+    <p>Weight: {{pokemon.weight}}</p>
+    <p>Height: {{pokemon.height}}</p>
+</div>
