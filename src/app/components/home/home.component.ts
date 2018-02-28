@@ -13,11 +13,11 @@ export class HomeComponent implements OnInit {
   @Input() message: string;
   @Input() message2: string;
 
-  private isLoading:boolean = true;
+  isLoading:boolean = false;
 
-  private defaultClasses:string = 'btn btn-primary btn-special';
+  defaultClasses:string = 'btn btn-primary btn-special';
 
-  private pokemons:any[];
+  pokemons:any[];
 
   constructor(private myService:MyServiceService) { }
 
@@ -25,12 +25,15 @@ export class HomeComponent implements OnInit {
     this.myService.listAll().subscribe(res => {
       this.pokemons = [];
       res.forEach(element => {
-        this.isLoading = false;
+        // this.isLoading = false;
         var str = "Apples are round, and apples are juicy."; 
         var splitted = element.url.split("/", 7); 
         let id = splitted[6];
-        let pokemon = {name:element.name, id:id};
-        pokemon.name = element.name;
+        let pokemon = {name:element.name, id:id, nameFr:""};
+        // pokemon.name = element.name;
+        this.myService.getName(id).subscribe(res => {
+          pokemon.name = res;
+        });
         this.pokemons.push(pokemon);
       });
     });

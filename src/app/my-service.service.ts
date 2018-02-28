@@ -8,12 +8,13 @@ import { of } from 'rxjs/observable/of';
 @Injectable()
 export class MyServiceService {
 
-  private pokemons:any = {};
+  private cache:any = {};
+  private cacheTrad:any = {};
   // private obs: Observable<any>;
 
   constructor(private http: HttpClient) { 
     /*this.obs = new Observable(observer => {
-      observer.next(this.pokemons);
+      observer.next(this.cache);
     });*/
   }
 
@@ -24,45 +25,57 @@ export class MyServiceService {
       return res.results;
     });*/
 
-    if(!this.pokemons.all) {
+    if(!this.cache.all) {
       return this.http.get<any>('https://pokeapi.co/api/v2/pokemon/').pipe(
         map(res => {
-          this.pokemons.all = res.results;
-          return this.pokemons.all;
+          this.cache.all = res.results;
+          return this.cache.all;
         })
       );
     } else {
-      return of(this.pokemons.all);
+      return of(this.cache.all);
     }
   }
 
   get(id:string): Observable<any> {
-    // sans cache
-    /*return this.http.get<any>('https://pokeapi.co/api/v2/pokemon/' + id)
-    .map(pokemon => {
-      if(pokemon.detail) {
-        return {error: pokemon.detail};
-      } else {
-        pokemon.type = pokemon.types.filter(type => type.slot==1)[0].type.name;
-        return pokemon;
-      }
-    });*/
+    let getPokemon = this.http.get<any>('https://pokeapi.co/api/v2/pokemon/' + id + '/');
 
-    if(!this.pokemons[id]) {
-      return this.http.get<any>('https://pokeapi.co/api/v2/pokemon/' + id).pipe(
+    if(!this.cache[id]) {
+      return getPokemon.pipe(
         map(pokemon => {
           if(pokemon.detail) {
             return {error: pokemon.detail};
           } else {
             pokemon.type = pokemon.types.filter(type => type.slot==1)[0].type.name;
-            this.pokemons[id] = pokemon;
+            this.cache[id] = pokemon;
             return pokemon;
           }
         })
       );
     } else {
       // return this.obs.map(pokemons => pokemons[id]);
-      return of(this.pokemons[id]);
+      return of(this.cache[id]);
+    }
+  }
+
+  getName(id:string): Observable<any> {
+    let trad = this.http.get<any>('https://pokeapi.co/api/v2/pokemon-species/' + id + '/');
+
+    if(!this.cacheTrad[id]) {
+      return trad.pipe(
+        map(res => {
+          if(res.detail) {
+            return {error: res.detail};
+          } else {
+            // pokemon.nameFr = pokemon.names.filter(name => name.slot==6)[0].name.name;
+            // res.nameFr = 
+            this.cacheTrad[id] = res.names[6].name;
+            return res.names[6].name;
+          }
+        })
+      );
+    } else {
+      return of(this.cacheTrad[id]);
     }
   }
 }

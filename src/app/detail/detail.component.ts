@@ -10,9 +10,10 @@ import { MyServiceService } from '../my-service.service';
   styleUrls: ['./detail.component.scss']
 })
 export class DetailComponent implements OnInit {
-  private pokemon:any;
-  private error:string;
-  private isLoading:boolean = true;
+  pokemon:any;
+  trad:any;
+  error:string;
+  isLoading:number = 0;
 
   constructor(private route: ActivatedRoute,
     private location: Location, private myService: MyServiceService) {
@@ -21,8 +22,13 @@ export class DetailComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.myService.get(params.id).subscribe(res => {
-        this.isLoading = false;
+        this.isLoading++;
         this.pokemon = res;
+      });
+
+      this.myService.getName(params.id).subscribe(res => {
+        this.isLoading++;
+        this.trad = res;
       });
     });
   }
